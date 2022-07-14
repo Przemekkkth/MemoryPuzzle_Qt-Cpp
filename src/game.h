@@ -13,8 +13,8 @@ public:
     static const unsigned int REVEAL_SPEED;
     static const unsigned int BOX_SIZE;
     static const unsigned int GAP_SIZE;
-    static const unsigned int BOARD_WIDTH;
-    static const unsigned int BOARD_HEIGHT;
+    static constexpr unsigned int BOARD_WIDTH = 10;
+    static constexpr unsigned int BOARD_HEIGHT = 7;
 
     static const int X_MARGIN;
     static const int Y_MARGIN;
@@ -40,6 +40,8 @@ public:
     static const QString DIAMOND;
     static const QString LINES;
     static const QString OVAL;
+
+    static const float ITERATION_VALUE;
 
     static QList<QColor> ALL_COLORS;
     static QStringList   ALL_SHAPES;

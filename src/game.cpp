@@ -5,8 +5,6 @@ const unsigned int Game::FPS = 30;
 const unsigned int Game::REVEAL_SPEED = 8;
 const unsigned int Game::BOX_SIZE = 40;
 const unsigned int Game::GAP_SIZE = 10;
-const unsigned int Game::BOARD_WIDTH = 10;
-const unsigned int Game::BOARD_HEIGHT = 7;
 
 const int Game::X_MARGIN = int( (RESOLUTION.width() - (BOARD_WIDTH * (BOX_SIZE + GAP_SIZE) )) / 2);
 const int Game::Y_MARGIN = int( (RESOLUTION.height() - (BOARD_HEIGHT * (BOX_SIZE + GAP_SIZE) )) / 2);;
@@ -42,6 +40,8 @@ QList<QColor> Game::ALL_COLORS = {
 QStringList   Game::ALL_SHAPES = {
     DONUT, SQUARE, DIAMOND, LINES, OVAL
 };
+
+const float Game::ITERATION_VALUE = 1000.0f/(float)FPS;
 
 Game::Game()
 {
