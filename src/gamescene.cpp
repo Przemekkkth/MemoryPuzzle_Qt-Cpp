@@ -184,6 +184,9 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
 
     QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
 
+    addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Qt::black), QBrush(Qt::black));
+
+
     if(shape == Game::DONUT)
     {
         QGraphicsEllipseItem* circle1 = new QGraphicsEllipseItem(0,0, half-5, half -5);
@@ -215,7 +218,7 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
         polyItem->setPolygon(poly);
         polyItem->setBrush(QBrush(color));
         polyItem->setPen(QPen(color));
-        polyItem->setPos(leftTopPoint.x(), leftTopPoint.y());
+        //polyItem->setPos(leftTopPoint.x(), leftTopPoint.y());
         addItem(polyItem);
     }
     else if(shape == Game::LINES)
@@ -225,11 +228,13 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
             QGraphicsLineItem *lineItem1 = new QGraphicsLineItem();
             lineItem1->setLine(QLine(QPoint(leftTopPoint.x(), leftTopPoint.y() + i), QPoint(leftTopPoint.x()+i, leftTopPoint.y())));
             lineItem1->setPen(QPen(color));
+            //lineItem1->setPos(leftTopPoint);
             addItem(lineItem1);
 
             QGraphicsLineItem *lineItem2 = new QGraphicsLineItem();
             lineItem2->setLine(QLine(QPoint(leftTopPoint.x() + i, leftTopPoint.y() + Game::BOX_SIZE - 1), QPoint(leftTopPoint.x()+ Game::BOX_SIZE - 1, leftTopPoint.y() + 1)));
             lineItem2->setPen(QPen(color));
+            //lineItem2->setPos(leftTopPoint);
             addItem(lineItem2);
         }
     }
