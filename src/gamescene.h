@@ -25,6 +25,8 @@ private:
     void startGameAnimation();
     QVector <QVector<QPoint> > splitIntoGroupsOf(int size, QVector<QPoint> points);
     void drawBoard();
+    QPair<QString, QColor> getShapeAndColor(int x, int y);
+    void drawIcon(QString shape, QColor color, int x, int y);
 
     float m_deltaTime, m_loopTime;
     const float m_loopSpeed;

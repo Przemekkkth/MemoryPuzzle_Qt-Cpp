@@ -2,6 +2,9 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsRectItem>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsPolygonItem>
+#include <QGraphicsLineItem>
 #include <algorithm>
 #include <vector>
 #include <utility>
@@ -14,7 +17,7 @@ GameScene::GameScene(QObject *parent)
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
     setBackgroundBrush(QBrush(Game::BG_COLOR));
 
-    generateRevealedBoxesData(m_revealedBoxes, false);
+    generateRevealedBoxesData(m_revealedBoxes, true);
     m_mainBoard = getRandomizedBoard();
 
     m_boxX = m_boxY = 0;
@@ -73,7 +76,7 @@ QVector< QVector< QPair<QString, QColor> > > GameScene::getRandomizedBoard()
 
     std::random_shuffle(tmpIcons.begin(), tmpIcons.end());
 
-    for(std::pair<QString, QColor> element : tmpIcons)
+    for(const std::pair<QString, QColor> &element : tmpIcons)
     {
         QPair<QString, QColor> e;
         e.first = element.first;
@@ -90,6 +93,7 @@ QVector< QVector< QPair<QString, QColor> > > GameScene::getRandomizedBoard()
             column.append(icons[0]);
             icons.removeFirst();
         }
+        board.push_back(column);
     }
     return board;
 }
@@ -159,10 +163,84 @@ void GameScene::drawBoard()
                   QGraphicsRectItem *rectItem = addRect(0, 0, Game::BOX_SIZE, Game::BOX_SIZE, QPen(Game::WHITE_COLOR), QBrush(Game::WHITE_COLOR));
                   rectItem->setPos(leftTopPoint);
               }
-
+              else
+              {
+                QPair<QString, QColor> pair = getShapeAndColor(x, y);
+                drawIcon(pair.first, pair.second, x, y);
+              }
           }
+    }
+}
 
-      }
+QPair<QString, QColor> GameScene::getShapeAndColor(int x, int y)
+{
+    return m_mainBoard[x][y];
+}
+
+void GameScene::drawIcon(QString shape, QColor color, int x, int y)
+{
+    int quarter = int(Game::BOX_SIZE * 0.25f);
+    int half =    int(Game::BOX_SIZE * 0.5f);
+
+    QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
+
+    if(shape == Game::DONUT)
+    {
+        QGraphicsEllipseItem* circle1 = new QGraphicsEllipseItem(0,0, half-5, half -5);
+        circle1->setBrush(QBrush(color));
+        circle1->setPen(QPen(color));
+        circle1->setPos(leftTopPoint.x() + half, leftTopPoint.y() + half);
+        addItem(circle1);
+
+        QGraphicsEllipseItem* circle2 = new QGraphicsEllipseItem(0,0, quarter - 5, quarter - 5);
+        circle2->setBrush(QBrush(Game::BG_COLOR));
+        circle2->setPen(QPen(Game::BG_COLOR));
+        circle2->setPos(leftTopPoint.x() + half, leftTopPoint.y() + half);
+        addItem(circle2);
+
+    }
+    else if(shape == Game::SQUARE)
+    {
+        QGraphicsRectItem* rectItem = new QGraphicsRectItem(0,0, Game::BOX_SIZE - half, Game::BOX_SIZE - half);
+        rectItem->setBrush(QBrush(color));
+        rectItem->setPen(QPen(color));
+        rectItem->setPos(leftTopPoint.x() + quarter, leftTopPoint.y()+quarter);
+        addItem(rectItem);
+    }
+    else if(shape == Game::DIAMOND)
+    {
+        QGraphicsPolygonItem* polyItem = new QGraphicsPolygonItem();
+        QList<QPoint> points = {QPoint(leftTopPoint.x() + half, leftTopPoint.y()), QPoint(leftTopPoint.x() + Game::BOX_SIZE - 1, leftTopPoint.y() + half), QPoint(leftTopPoint.x() + half, leftTopPoint.y() + Game::BOX_SIZE - 1), QPoint(leftTopPoint.x(), leftTopPoint.y() + half)};
+        QPolygonF poly = QPolygonF(points);
+        polyItem->setPolygon(poly);
+        polyItem->setBrush(QBrush(color));
+        polyItem->setPen(QPen(color));
+        polyItem->setPos(leftTopPoint.x(), leftTopPoint.y());
+        addItem(polyItem);
+    }
+    else if(shape == Game::LINES)
+    {
+        for(unsigned int i = 0; i < Game::BOX_SIZE; ++i)
+        {
+            QGraphicsLineItem *lineItem1 = new QGraphicsLineItem();
+            lineItem1->setLine(QLine(QPoint(leftTopPoint.x(), leftTopPoint.y() + i), QPoint(leftTopPoint.x()+i, leftTopPoint.y())));
+            lineItem1->setPen(QPen(color));
+            addItem(lineItem1);
+
+            QGraphicsLineItem *lineItem2 = new QGraphicsLineItem();
+            lineItem2->setLine(QLine(QPoint(leftTopPoint.x() + i, leftTopPoint.y() + Game::BOX_SIZE - 1), QPoint(leftTopPoint.x()+ Game::BOX_SIZE - 1, leftTopPoint.y() + 1)));
+            lineItem2->setPen(QPen(color));
+            addItem(lineItem2);
+        }
+    }
+    else if(shape == Game::OVAL)
+    {
+        QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem(0, 0, Game::BOX_SIZE, half);
+        ellipseItem->setBrush(QBrush(color));
+        ellipseItem->setPen(QPen(color));
+        ellipseItem->setPos(leftTopPoint.x(), leftTopPoint.y()+quarter);
+        addItem(ellipseItem);
+    }
 }
 
 void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
