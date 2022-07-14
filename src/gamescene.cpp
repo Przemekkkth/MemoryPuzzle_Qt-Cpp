@@ -14,6 +14,7 @@ GameScene::GameScene(QObject *parent)
     generateRevealedBoxesData(m_revealedBoxes, false);
     m_mainBoard = getRandomizedBoard();
 
+    startGameAnimation(m_mainBoard);
     connect(&m_timer, &QTimer::timeout, this, &GameScene::loop);
     m_timer.start(Game::ITERATION_VALUE);
     m_elapsedTimer.start();
@@ -68,6 +69,55 @@ QVector<QPair<QString, QColor> > GameScene::getRandomizedBoard()
     std::random_shuffle(icons.begin(), icons.end());
 
     return retValue;
+}
+
+QPointF GameScene::leftTopCoordsOfBox(QPointF point)
+{
+    //Convert board coordinates to pixel coordinates
+    float left = point.x() * (Game::BOX_SIZE + Game::GAP_SIZE) + Game::X_MARGIN;
+    float top =  point.y() * (Game::BOX_SIZE + Game::GAP_SIZE) + Game::Y_MARGIN;
+    return QPointF(left, top);
+}
+
+void GameScene::startGameAnimation(QVector<QPair<QString, QColor> > board)
+{
+    bool coveredBoxes[Game::BOARD_WIDTH][Game::BOARD_HEIGHT];
+    generateRevealedBoxesData(coveredBoxes, false);
+
+    std::vector<QPoint> tmpBoxes;
+    for(unsigned int x = 0; x < Game::BOARD_WIDTH; ++x)
+    {
+        for(unsigned int y = 0; y < Game::BOARD_HEIGHT; ++y)
+        {
+            tmpBoxes.push_back(QPoint(x,y));
+        }
+    }
+
+    std::random_shuffle(tmpBoxes.begin(), tmpBoxes.end());
+    QVector<QPoint> boxes;
+    for(QPoint point : tmpBoxes)
+    {
+        boxes.push_back(point);
+    }
+    //qDebug() << "Box " << boxes;
+    QVector< QVector<QPoint> > boxGroups = splitIntoGroupsOf(8, boxes);
+    //qDebug() << "boxGroup" << boxGroups;
+}
+
+QVector<QVector<QPoint> > GameScene::splitIntoGroupsOf(int size, QVector<QPoint> points)
+{
+    QVector<QPoint> sub;
+    QVector< QVector<QPoint> > mainVector;
+    for(int i = 0; i < points.length(); i += size)
+    {
+        sub.clear();
+        for(int j = i; j < i + size; ++j)
+        {
+            sub.push_back(points.at(j));
+        }
+        mainVector.push_back(sub);
+    }
+    return mainVector;
 }
 
 void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

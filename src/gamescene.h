@@ -21,6 +21,10 @@ private:
     void generateRevealedBoxesData(bool a[Game::BOARD_WIDTH][Game::BOARD_HEIGHT], bool value);
     QVector< QPair<QString, QColor> > getRandomizedBoard();
     bool m_revealedBoxes[Game::BOARD_WIDTH][Game::BOARD_HEIGHT];
+    QPointF leftTopCoordsOfBox(QPointF point);
+    void startGameAnimation(QVector< QPair<QString, QColor> > board);
+    QVector <QVector<QPoint> > splitIntoGroupsOf(int size, QVector<QPoint> points);
+
     float m_deltaTime, m_loopTime;
     const float m_loopSpeed;
     QTimer m_timer;
