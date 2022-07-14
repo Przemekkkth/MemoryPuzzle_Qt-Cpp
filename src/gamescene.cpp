@@ -1,4 +1,8 @@
 #include "gamescene.h"
+#include <QDebug>
+#include <algorithm>
+#include <vector>
+#include <utility>
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE)
@@ -7,6 +11,7 @@ GameScene::GameScene(QObject *parent)
     setBackgroundBrush(QBrush(Game::BG_COLOR));
 
     generateRevealedBoxesData(m_revealedBoxes, false);
+    m_mainBoard = getRandomizedBoard();
 
     connect(&m_timer, &QTimer::timeout, this, &GameScene::loop);
     m_timer.start(Game::ITERATION_VALUE);
@@ -34,4 +39,32 @@ void GameScene::generateRevealedBoxesData(bool tab[Game::BOARD_WIDTH][Game::BOAR
             tab[i][j] = value;
         }
     }
+}
+
+QVector<QPair<QString, QColor> > GameScene::getRandomizedBoard()
+{
+    QVector<QPair<QString, QColor> > retValue;
+
+    std::vector<std::pair<QString, QColor> > icons;
+    foreach(QString shape, Game::ALL_SHAPES)
+    {
+        foreach(QColor color, Game::ALL_COLORS)
+        {
+            icons.push_back(std::pair(shape, color));
+        }
+    }
+
+    std::random_shuffle(icons.begin(), icons.end());
+
+    foreach(QString shape, Game::ALL_SHAPES)
+    {
+        foreach(QColor color, Game::ALL_COLORS)
+        {
+            icons.push_back(std::pair(shape, color));
+        }
+    }
+
+    std::random_shuffle(icons.begin(), icons.end());
+
+    return retValue;
 }
