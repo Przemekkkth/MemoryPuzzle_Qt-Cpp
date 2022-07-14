@@ -26,6 +26,12 @@ private:
     QTimer m_timer;
     QElapsedTimer m_elapsedTimer;
     QVector< QPair<QString, QColor> > m_mainBoard;
+    bool m_mouseClicked;
+    QPointF m_clickedPos;
+
+    // QGraphicsScene interface
+protected:
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 };
 
 #endif // GAMESCENE_H

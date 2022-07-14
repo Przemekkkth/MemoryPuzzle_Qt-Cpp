@@ -1,11 +1,12 @@
 #include "gamescene.h"
 #include <QDebug>
+#include <QGraphicsSceneMouseEvent>
 #include <algorithm>
 #include <vector>
 #include <utility>
 
 GameScene::GameScene(QObject *parent)
-    : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE)
+    : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_mouseClicked(false)
 {
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
     setBackgroundBrush(QBrush(Game::BG_COLOR));
@@ -67,4 +68,11 @@ QVector<QPair<QString, QColor> > GameScene::getRandomizedBoard()
     std::random_shuffle(icons.begin(), icons.end());
 
     return retValue;
+}
+
+void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    m_mouseClicked = true;
+    m_clickedPos = event->scenePos();
+    QGraphicsScene::mouseReleaseEvent(event);
 }
