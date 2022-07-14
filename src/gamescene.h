@@ -16,6 +16,7 @@ signals:
 private slots:
     void loop();
 private:
+    void generateRevealedBoxesData(bool a[Game::BOARD_WIDTH][Game::BOARD_HEIGHT], bool value);
     bool m_revealedBoxes[Game::BOARD_WIDTH][Game::BOARD_HEIGHT];
     float m_deltaTime, m_loopTime;
     const float m_loopSpeed;
