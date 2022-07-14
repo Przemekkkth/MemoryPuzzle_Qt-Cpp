@@ -19,19 +19,21 @@ private slots:
     void loop();
 private:
     void generateRevealedBoxesData(bool a[Game::BOARD_WIDTH][Game::BOARD_HEIGHT], bool value);
-    QVector< QPair<QString, QColor> > getRandomizedBoard();
+    QVector<QVector<QPair<QString, QColor> > > getRandomizedBoard();
     bool m_revealedBoxes[Game::BOARD_WIDTH][Game::BOARD_HEIGHT];
     QPointF leftTopCoordsOfBox(QPointF point);
-    void startGameAnimation(QVector< QPair<QString, QColor> > board);
+    void startGameAnimation();
     QVector <QVector<QPoint> > splitIntoGroupsOf(int size, QVector<QPoint> points);
+    void drawBoard();
 
     float m_deltaTime, m_loopTime;
     const float m_loopSpeed;
     QTimer m_timer;
     QElapsedTimer m_elapsedTimer;
-    QVector< QPair<QString, QColor> > m_mainBoard;
+    QVector<QVector<QPair<QString, QColor> > > m_mainBoard;
     bool m_mouseClicked;
     QPointF m_clickedPos;
+    int m_boxX, m_boxY;
 
     // QGraphicsScene interface
 protected:
