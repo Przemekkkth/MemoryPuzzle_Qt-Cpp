@@ -13,7 +13,7 @@ class GameScene : public QGraphicsScene
     Q_OBJECT
 public:
     explicit GameScene(QObject *parent = nullptr);
-
+    void startGameAnimation();
 signals:
 private slots:
     void loop();
@@ -22,11 +22,14 @@ private:
     QVector<QVector<QPair<QString, QColor> > > getRandomizedBoard();
     bool m_revealedBoxes[Game::BOARD_WIDTH][Game::BOARD_HEIGHT];
     QPointF leftTopCoordsOfBox(QPointF point);
-    void startGameAnimation();
+
     QVector <QVector<QPoint> > splitIntoGroupsOf(int size, QVector<QPoint> points);
     void drawBoard();
     QPair<QString, QColor> getShapeAndColor(int x, int y);
     void drawIcon(QString shape, QColor color, int x, int y);
+    void revealBoxesAnimation(QVector<QPoint> boxGroup);
+    void coverBoxesAnimation(QVector<QPoint> boxGroup);
+    void drawBoxCovers(QVector<QPoint> boxGroup, int coverage);
 
     float m_deltaTime, m_loopTime;
     const float m_loopSpeed;

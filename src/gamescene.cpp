@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <vector>
 #include <utility>
+#include <QThread>
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_mouseClicked(false)
@@ -17,7 +18,7 @@ GameScene::GameScene(QObject *parent)
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
     setBackgroundBrush(QBrush(Game::BG_COLOR));
 
-    generateRevealedBoxesData(m_revealedBoxes, true);
+    generateRevealedBoxesData(m_revealedBoxes, false);
     m_mainBoard = getRandomizedBoard();
 
     m_boxX = m_boxY = 0;
@@ -130,6 +131,15 @@ void GameScene::startGameAnimation()
     QVector< QVector<QPoint> > boxGroups = splitIntoGroupsOf(8, boxes);
     //qDebug() << "boxGroup" << boxGroups;
     drawBoard();
+
+    //    for boxGroup in boxGroups:
+    //        revealBoxesAnimation(board, boxGroup)
+    //        coverBoxesAnimation(board, boxGroup)
+    for(const QVector<QPoint> &boxGroup : boxGroups)
+    {
+        revealBoxesAnimation(boxGroup);
+        //coverBoxesAnimation(boxGroup);
+    }
 }
 
 QVector<QVector<QPoint> > GameScene::splitIntoGroupsOf(int size, QVector<QPoint> points)
@@ -154,21 +164,21 @@ QVector<QVector<QPoint> > GameScene::splitIntoGroupsOf(int size, QVector<QPoint>
 void GameScene::drawBoard()
 {
     for(unsigned int x = 0; x < Game::BOARD_WIDTH; ++x)
-      {
-          for(unsigned int y = 0; y < Game::BOARD_HEIGHT; ++y)
-          {
-              QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
-              if(!m_revealedBoxes[x][y])
-              {
-                  QGraphicsRectItem *rectItem = addRect(0, 0, Game::BOX_SIZE, Game::BOX_SIZE, QPen(Game::WHITE_COLOR), QBrush(Game::WHITE_COLOR));
-                  rectItem->setPos(leftTopPoint);
-              }
-              else
-              {
+    {
+        for(unsigned int y = 0; y < Game::BOARD_HEIGHT; ++y)
+        {
+            QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
+            if(!m_revealedBoxes[x][y])
+            {
+                QGraphicsRectItem *rectItem = addRect(0, 0, Game::BOX_SIZE, Game::BOX_SIZE, QPen(Game::WHITE_COLOR), QBrush(Game::WHITE_COLOR));
+                rectItem->setPos(leftTopPoint);
+            }
+            else
+            {
                 QPair<QString, QColor> pair = getShapeAndColor(x, y);
                 drawIcon(pair.first, pair.second, x, y);
-              }
-          }
+            }
+        }
     }
 }
 
@@ -184,7 +194,7 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
 
     QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
 
-    addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Qt::black), QBrush(Qt::black));
+    //addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Qt::black), QBrush(Qt::black));
 
 
     if(shape == Game::DONUT)
@@ -227,7 +237,7 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
         {
             QGraphicsLineItem *lineItem1 = new QGraphicsLineItem();
             lineItem1->setLine(QLine(QPoint(leftTopPoint.x(), leftTopPoint.y() + i), QPoint(leftTopPoint.x()+i, leftTopPoint.y())));
-            lineItem1->setPen(QPen(color));
+            lineItem1->setPen(QPen(color, 2));
             //lineItem1->setPos(leftTopPoint);
             addItem(lineItem1);
 
@@ -246,6 +256,46 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
         ellipseItem->setPos(leftTopPoint.x(), leftTopPoint.y()+quarter);
         addItem(ellipseItem);
     }
+}
+
+void GameScene::revealBoxesAnimation(QVector<QPoint> boxGroup)
+{
+    for(int coverage = Game::BOX_SIZE; coverage > (-int(Game::REVEAL_SPEED)) - 1; coverage-=Game::REVEAL_SPEED)
+    {
+        qDebug() << "coverage " << coverage;
+        drawBoxCovers(boxGroup, coverage);
+    }
+
+}
+
+void GameScene::coverBoxesAnimation(QVector<QPoint> boxGroup)
+{
+    for(int coverage = 0; coverage < int(Game::BOX_SIZE)+int(Game::REVEAL_SPEED); coverage += int(Game::REVEAL_SPEED))
+    {
+        drawBoxCovers(boxGroup, coverage);
+    }
+}
+
+void GameScene::drawBoxCovers(QVector<QPoint> boxGroup, int coverage)
+{
+
+    for(QPoint point : boxGroup)
+    {
+        QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(point));
+        addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Game::BG_COLOR), QBrush(Game::BG_COLOR));
+        QPair<QString, QColor> pair = getShapeAndColor(point.x(), point.y());
+        drawIcon(pair.first, pair.second, point.x(), point.y());
+        if(coverage > 0)
+        {
+            QGraphicsRectItem* rectItem = new QGraphicsRectItem(0,0,coverage, Game::BOX_SIZE);
+            rectItem->setPen(QPen(Game::BG_COLOR));
+            rectItem->setBrush(QBrush(Game::BG_COLOR));
+            rectItem->setPos(leftTopPoint.x(), leftTopPoint.y());
+            addItem(rectItem);
+            QThread::currentThread()->msleep(1000/30);
+        }
+    }
+
 }
 
 void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

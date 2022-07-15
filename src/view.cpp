@@ -11,6 +11,8 @@ View::View()
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
+
+
 void View::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
