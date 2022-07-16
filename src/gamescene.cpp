@@ -12,7 +12,7 @@
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_mouseClicked(false)
-    , m_boxX(0), m_boxY(0)
+    , m_boxX(0), m_boxY(0), m_coverage(0)
 {
 
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
@@ -128,18 +128,27 @@ void GameScene::startGameAnimation()
         boxes.push_back(point);
     }
     //qDebug() << "Box " << boxes;
-    QVector< QVector<QPoint> > boxGroups = splitIntoGroupsOf(8, boxes);
+    m_boxGroups = splitIntoGroupsOf(8, boxes);
     //qDebug() << "boxGroup" << boxGroups;
     drawBoard();
-
-    //    for boxGroup in boxGroups:
-    //        revealBoxesAnimation(board, boxGroup)
-    //        coverBoxesAnimation(board, boxGroup)
-    for(const QVector<QPoint> &boxGroup : boxGroups)
+    for(int i = 0; i < m_boxGroups.size(); ++i)
     {
-        revealBoxesAnimation(boxGroup);
-        //coverBoxesAnimation(boxGroup);
+        QVector<QGraphicsRectItem*> items;
+        for(int j = 0; j < m_boxGroups[i].size(); ++j)
+        {
+            QGraphicsRectItem* rectItem = new QGraphicsRectItem();
+            addItem(rectItem);
+            items.push_back(rectItem);
+        }
+        m_reneaveCoverAnimRectItems.push_back(items);
     }
+
+
+    revealAndCoverBoxesAnimation(m_boxGroups[0], 0);
+
+    QTimer::singleShot(5000,[this](){
+        revealAndCoverBoxesAnimation(m_boxGroups[1], 1);
+    });
 }
 
 QVector<QVector<QPoint> > GameScene::splitIntoGroupsOf(int size, QVector<QPoint> points)
@@ -258,14 +267,67 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
     }
 }
 
-void GameScene::revealBoxesAnimation(QVector<QPoint> boxGroup)
+void GameScene::revealAndCoverBoxesAnimation(QVector<QPoint> boxGroup, int index)
 {
-    for(int coverage = Game::BOX_SIZE; coverage > (-int(Game::REVEAL_SPEED)) - 1; coverage-=Game::REVEAL_SPEED)
-    {
-        qDebug() << "coverage " << coverage;
-        drawBoxCovers(boxGroup, coverage);
-    }
+    drawBoard();
+    m_coverage = Game::BOX_SIZE;
+    m_boxGroup = boxGroup;
 
+    connect(&m_revealTimer, &QTimer::timeout, [this,index](){
+        int i = 0;
+        for(QPoint point : m_boxGroup)
+        {
+            QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(point));
+            addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Game::BG_COLOR), QBrush(Game::BG_COLOR));
+            QPair<QString, QColor> pair = getShapeAndColor(point.x(), point.y());
+            drawIcon(pair.first, pair.second, point.x(), point.y());
+            if(m_coverage > 0)
+            {
+                removeItem(m_reneaveCoverAnimRectItems[index][i]);
+                m_reneaveCoverAnimRectItems[index][i]->setRect(0,0, m_coverage, Game::BOX_SIZE);
+                m_reneaveCoverAnimRectItems[index][i]->setPen(QPen(Game::BG_COLOR));
+                m_reneaveCoverAnimRectItems[index][i]->setBrush(QBrush(Qt::red));
+                m_reneaveCoverAnimRectItems[index][i]->setPos(leftTopPoint.x(), leftTopPoint.y());
+                addItem(m_reneaveCoverAnimRectItems[index][i]);
+            }
+            i++;
+        }
+        if(m_coverage < (-int(Game::REVEAL_SPEED)) - 1)
+        {
+            m_revealTimer.stop();
+            m_coverage = 0;
+                        m_coverTimer.start(125);
+            connect(&m_coverTimer, &QTimer::timeout, [this, index](){
+                int i = 0;
+                m_coverage += int(Game::REVEAL_SPEED);
+                if(m_coverage > int(Game::BOX_SIZE)-int(Game::REVEAL_SPEED))
+                {
+                    m_coverTimer.stop();
+                }
+                for(QPoint point : m_boxGroup)
+                {
+                    QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(point));
+                    addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Game::BG_COLOR), QBrush(Game::BG_COLOR));
+                    QPair<QString, QColor> pair = getShapeAndColor(point.x(), point.y());
+                    drawIcon(pair.first, pair.second, point.x(), point.y());
+                    if(m_coverage > 0)
+                    {
+                        removeItem(m_reneaveCoverAnimRectItems[index][i]);
+                        m_reneaveCoverAnimRectItems[index][i]->setRect(0,0, m_coverage+2, Game::BOX_SIZE+2);
+                        m_reneaveCoverAnimRectItems[index][i]->setPen(QPen(Game::BG_COLOR));
+                        m_reneaveCoverAnimRectItems[index][i]->setBrush(QBrush(Qt::red));
+                        m_reneaveCoverAnimRectItems[index][i]->setPos(leftTopPoint.x()-1, leftTopPoint.y()-1);
+                        addItem(m_reneaveCoverAnimRectItems[index][i]);
+                    }
+                    i++;
+                }
+            });
+
+        }
+        m_coverage -= Game::REVEAL_SPEED;
+    }
+    );
+    m_revealTimer.start(125);
 }
 
 void GameScene::coverBoxesAnimation(QVector<QPoint> boxGroup)
@@ -292,7 +354,6 @@ void GameScene::drawBoxCovers(QVector<QPoint> boxGroup, int coverage)
             rectItem->setBrush(QBrush(Game::BG_COLOR));
             rectItem->setPos(leftTopPoint.x(), leftTopPoint.y());
             addItem(rectItem);
-            QThread::currentThread()->msleep(1000/30);
         }
     }
 

@@ -27,8 +27,10 @@ private:
     void drawBoard();
     QPair<QString, QColor> getShapeAndColor(int x, int y);
     void drawIcon(QString shape, QColor color, int x, int y);
-    void revealBoxesAnimation(QVector<QPoint> boxGroup);
+    void revealAndCoverBoxesAnimation(QVector<QPoint> boxGroup, int index);
+    QTimer m_revealTimer;
     void coverBoxesAnimation(QVector<QPoint> boxGroup);
+    QTimer m_coverTimer;
     void drawBoxCovers(QVector<QPoint> boxGroup, int coverage);
 
     float m_deltaTime, m_loopTime;
@@ -39,7 +41,10 @@ private:
     bool m_mouseClicked;
     QPointF m_clickedPos;
     int m_boxX, m_boxY;
-
+    int m_coverage;
+    QVector<QPoint> m_boxGroup;
+    QVector< QVector<QGraphicsRectItem*> >  m_reneaveCoverAnimRectItems;
+    QVector< QVector<QPoint> > m_boxGroups;
     // QGraphicsScene interface
 protected:
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
