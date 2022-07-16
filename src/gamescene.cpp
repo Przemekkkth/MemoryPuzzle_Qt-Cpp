@@ -45,7 +45,14 @@ void GameScene::loop()
         clear();
         drawBoard();
         drawText();
-        qDebug() << getBoxAtPixel(m_clickedPos.x(), m_clickedPos.y());
+        QPointF boardPoint =  getBoxAtPixel(m_clickedPos.x(), m_clickedPos.y());
+        if(boardPoint != QPointF(-1,-1))
+        {
+            if(!m_revealedBoxes[int(boardPoint.x())][int(boardPoint.y())])
+            {
+                drawHighlightBox(boardPoint.x(), boardPoint.y());
+            }
+        }
     }
 }
 
@@ -120,7 +127,7 @@ QPointF GameScene::getBoxAtPixel(float x, float y)
 {
     if(m_clickedPos == QPointF())
     {
-        return QPointF();
+        return QPointF(-1, -1);
     }
 //    for boxx in range(BOARDWIDTH):
 //        for boxy in range(BOARDHEIGHT):
@@ -141,7 +148,7 @@ QPointF GameScene::getBoxAtPixel(float x, float y)
             }
         }
     }
-    return QPointF();
+    return QPointF(-1, -1);
 }
 
 void GameScene::startGameAnimation()
@@ -341,6 +348,14 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
         ellipseItem->setPos(leftTopPoint.x(), leftTopPoint.y()+quarter);
         addItem(ellipseItem);
     }
+}
+
+void GameScene::drawHighlightBox(float x, float y)
+{
+    //left, top = leftTopCoordsOfBox(boxx, boxy)
+    //    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, (left - 5, top - 5, BOXSIZE + 10, BOXSIZE + 10), 4)
+    QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
+    addRect(leftTopPoint.x() - 5, leftTopPoint.y() - 5, Game::BOX_SIZE+10, Game::BOX_SIZE + 10, QPen(QBrush(Game::HIGHLIGHT_COLOR), 4), QBrush(Qt::transparent));
 }
 
 void GameScene::revealAndCoverBoxesAnimation(QVector<QPoint> boxGroup, int index)

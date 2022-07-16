@@ -28,6 +28,7 @@ private:
     void drawBoard();
     void drawText();
     void drawIcon(QString shape, QColor color, int x, int y);
+    void drawHighlightBox(float x, float y);
     QPair<QString, QColor> getShapeAndColor(int x, int y);
 
     QTimer m_revealTimer;
