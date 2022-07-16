@@ -50,7 +50,7 @@ private:
     QVector<int> m_revealCoverAnimCoverage;
     QVector<QTimer*> m_revealAnimTimers;
     QVector<QTimer*> m_coverAnimTimers;
-
+    bool m_isStartAnimRunnning;
 protected:
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 };

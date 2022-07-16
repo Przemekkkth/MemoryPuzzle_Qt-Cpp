@@ -13,7 +13,7 @@
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_mouseClicked(false)
-    , m_boxX(0), m_boxY(0)
+    , m_boxX(0), m_boxY(0), m_isStartAnimRunnning(false)
 {
 
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
@@ -38,9 +38,12 @@ void GameScene::loop()
     m_elapsedTimer.restart();
 
     m_loopTime += m_deltaTime;
-    if( m_loopTime > m_loopSpeed)
+    if( m_loopTime > m_loopSpeed && !m_isStartAnimRunnning)
     {
         m_loopTime -= m_loopSpeed;
+        setBackgroundBrush(QBrush(Game::BG_COLOR));
+        clear();
+        drawBoard();
     }
 }
 
@@ -116,6 +119,8 @@ void GameScene::startGameAnimation()
     bool coveredBoxes[Game::BOARD_WIDTH][Game::BOARD_HEIGHT];
     generateRevealedBoxesData(coveredBoxes, false);
 
+    m_isStartAnimRunnning = true;
+
     std::vector<QPoint> tmpBoxes;
     for(unsigned int x = 0; x < Game::BOARD_WIDTH; ++x)
     {
@@ -175,6 +180,9 @@ void GameScene::startGameAnimation()
             this->revealAndCoverBoxesAnimation(m_boxGroups[i], i);
         });
     }
+    QTimer::singleShot(m_boxGroups.size()*3200,[this](){
+        this->m_isStartAnimRunnning = false;
+    } );
 
 }
 
