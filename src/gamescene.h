@@ -43,8 +43,11 @@ private:
     int m_boxX, m_boxY;
     int m_coverage;
     QVector<QPoint> m_boxGroup;
-    QVector< QVector<QGraphicsRectItem*> >  m_reneaveCoverAnimRectItems;
+    QVector< QVector<QGraphicsRectItem*> >  m_revealCoverAnimRectItems;
     QVector< QVector<QPoint> > m_boxGroups;
+    QVector<int> m_revealCoverAnimCoverage;
+    QVector<QTimer*> m_revealAnimTimers;
+    QVector<QTimer*> m_coverAnimTimers;
     // QGraphicsScene interface
 protected:
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;

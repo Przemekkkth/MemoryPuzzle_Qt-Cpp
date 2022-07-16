@@ -45,6 +45,9 @@ public:
 
     static QList<QColor> ALL_COLORS;
     static QStringList   ALL_SHAPES;
+
+    static constexpr int RENEVAL_ANIM_SPEED = int(120.0f);
+    static constexpr int COVER_ANIM_SPEED = int(300.0f);
 };
 
 #endif // GAME_H
