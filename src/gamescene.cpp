@@ -44,6 +44,8 @@ void GameScene::loop()
         setBackgroundBrush(QBrush(Game::BG_COLOR));
         clear();
         drawBoard();
+        drawText();
+        qDebug() << getBoxAtPixel(m_clickedPos.x(), m_clickedPos.y());
     }
 }
 
@@ -112,6 +114,34 @@ QPointF GameScene::leftTopCoordsOfBox(QPointF point)
     float left = point.x() * (Game::BOX_SIZE + Game::GAP_SIZE) + Game::X_MARGIN;
     float top =  point.y() * (Game::BOX_SIZE + Game::GAP_SIZE) + Game::Y_MARGIN;
     return QPointF(left, top);
+}
+
+QPointF GameScene::getBoxAtPixel(float x, float y)
+{
+    if(m_clickedPos == QPointF())
+    {
+        return QPointF();
+    }
+//    for boxx in range(BOARDWIDTH):
+//        for boxy in range(BOARDHEIGHT):
+//            left, top = leftTopCoordsOfBox(boxx, boxy)
+//            boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)
+//            if boxRect.collidepoint(x, y):
+//                return (boxx, boxy)
+//    return (None, None)
+    for(unsigned int boxx = 0; boxx < Game::BOARD_WIDTH; ++boxx)
+    {
+        for(unsigned int boxy = 0; boxy < Game::BOARD_HEIGHT; ++boxy)
+        {
+            QPointF leftTop = leftTopCoordsOfBox(QPointF(boxx, boxy));
+            QRectF boxRect = QRectF(leftTop, QSizeF(Game::BOX_SIZE, Game::BOX_SIZE));
+            if(boxRect.contains(x, y))
+            {
+                return QPointF(boxx, boxy);
+            }
+        }
+    }
+    return QPointF();
 }
 
 void GameScene::startGameAnimation()
@@ -224,6 +254,17 @@ void GameScene::drawBoard()
             }
         }
     }
+}
+
+void GameScene::drawText()
+{
+    QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem();
+    textItem->setFont(QFont(m_familyName, 30, 80));
+    textItem->setText("Memory Puzzle");
+    textItem->setPos(0.35f*Game::RESOLUTION.width(), 0);
+    textItem->setBrush(QBrush(Game::WHITE_COLOR));
+    textItem->setPen(QPen(Game::CYAN_COLOR));
+    addItem(textItem);
 }
 
 QPair<QString, QColor> GameScene::getShapeAndColor(int x, int y)
@@ -404,6 +445,10 @@ void GameScene::drawBoxCovers(QVector<QPoint> boxGroup, int coverage)
 
 void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if(m_isStartAnimRunnning)
+    {
+        return;
+    }
     m_mouseClicked = true;
     m_clickedPos = event->scenePos();
     QGraphicsScene::mouseReleaseEvent(event);

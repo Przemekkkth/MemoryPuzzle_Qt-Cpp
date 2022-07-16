@@ -10,6 +10,7 @@ View::View()
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setCursor(QCursor(QPixmap(Game::PATH_TO_CURSOR_PIXMAP)));
+    setWindowTitle(QString());
 }
 
 
