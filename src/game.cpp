@@ -43,6 +43,9 @@ QStringList   Game::ALL_SHAPES = {
 
 const float Game::ITERATION_VALUE = 1000.0f/(float)FPS;
 
+const QString Game::PATH_TO_FONT = ":/res/college.ttf";
+const QString Game::PATH_TO_CURSOR_PIXMAP = ":/res/cursor.png";
+
 Game::Game()
 {
     Q_STATIC_ASSERT_X((BOARD_WIDTH * BOARD_HEIGHT) % 2 == 0, "Board needs to have an even number of boxes for pairs of matches.");

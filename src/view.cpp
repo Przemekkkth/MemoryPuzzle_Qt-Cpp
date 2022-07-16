@@ -9,6 +9,7 @@ View::View()
     resize(sceneRect().width() + 2, sceneRect().height() + 2);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setCursor(QCursor(QPixmap(Game::PATH_TO_CURSOR_PIXMAP)));
 }
 
 

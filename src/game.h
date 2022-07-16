@@ -48,6 +48,9 @@ public:
 
     static constexpr int RENEVAL_ANIM_SPEED = int(120.0f);
     static constexpr int COVER_ANIM_SPEED = int(300.0f);
+
+    static const QString PATH_TO_FONT;
+    static const QString PATH_TO_CURSOR_PIXMAP;
 };
 
 #endif // GAME_H
