@@ -9,14 +9,18 @@
 #include <vector>
 #include <utility>
 #include <QThread>
+#include <QFontDatabase>
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_mouseClicked(false)
-    , m_boxX(0), m_boxY(0), m_coverage(0)
+    , m_boxX(0), m_boxY(0)
 {
 
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
     setBackgroundBrush(QBrush(Game::BG_COLOR));
+
+    int id = QFontDatabase::addApplicationFont(":/res/college.ttf");
+    m_familyName = QFontDatabase::applicationFontFamilies(id).at(0);
 
     generateRevealedBoxesData(m_revealedBoxes, false);
     m_mainBoard = getRandomizedBoard();
@@ -158,10 +162,17 @@ void GameScene::startGameAnimation()
     }
     //revealAndCoverBoxesAnimation(m_boxGroups[0], 0);
 
+    QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem();
+    textItem->setFont(QFont(m_familyName, 30, 50));
+    textItem->setText("Memory this");
+    textItem->setPos(0.35f*Game::RESOLUTION.width(), 0);
+    textItem->setBrush(QBrush(Game::WHITE_COLOR));
+    addItem(textItem);
+
     for(int i = 0; i < m_boxGroups.size(); ++i)
     {
         QTimer::singleShot(i*3200,[i, this](){
-            revealAndCoverBoxesAnimation(m_boxGroups[i], i);
+            this->revealAndCoverBoxesAnimation(m_boxGroups[i], i);
         });
     }
 

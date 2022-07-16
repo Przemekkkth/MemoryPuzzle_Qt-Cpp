@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/cursor.png</file>
+        <file>res/college.ttf</file>
+    </qresource>
+</RCC>
