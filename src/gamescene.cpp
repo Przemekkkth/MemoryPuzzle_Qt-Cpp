@@ -77,7 +77,6 @@ void GameScene::loop()
                     QPair<QString, QColor> field2 = getShapeAndColor(int(boardPoint.x()), int(boardPoint.y()));
                     if(field1.first != field2.first || field1.second != field2.second)
                     {
-                        //QThread::currentThread()->msleep(1000);
                         hideBox(int(m_firstSelection.x()), int(m_firstSelection.y()), int(boardPoint.x()), int(boardPoint.y()) );
                         m_hide = true;
                     }
@@ -168,13 +167,6 @@ QPointF GameScene::getBoxAtPixel(float x, float y)
     {
         return QPointF(-1, -1);
     }
-    //    for boxx in range(BOARDWIDTH):
-    //        for boxy in range(BOARDHEIGHT):
-    //            left, top = leftTopCoordsOfBox(boxx, boxy)
-    //            boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)
-    //            if boxRect.collidepoint(x, y):
-    //                return (boxx, boxy)
-    //    return (None, None)
     for(unsigned int boxx = 0; boxx < Game::BOARD_WIDTH; ++boxx)
     {
         for(unsigned int boxy = 0; boxy < Game::BOARD_HEIGHT; ++boxy)
@@ -212,9 +204,8 @@ void GameScene::startGameAnimation()
     {
         boxes.push_back(point);
     }
-    //qDebug() << "Box " << boxes;
     m_boxGroups = splitIntoGroupsOf(8, boxes);
-    //qDebug() << "boxGroup" << boxGroups;
+
     drawBoard();
     for(int i = 0; i < m_boxGroups.size(); ++i)
     {
@@ -229,24 +220,22 @@ void GameScene::startGameAnimation()
     }
     m_revealCoverAnimCoverage.resize(m_boxGroups.size());
 
-    //m_revealAnimTimers.resize(m_boxGroups.size());
     for(int i = 0; i < m_boxGroups.size(); ++i)
     {
         QTimer* t = new QTimer(this);
         m_revealAnimTimers.push_back(t);
     }
-    //m_coverAnimTimers.resize(m_boxGroups.size());
+
     for(int i = 0; i < m_boxGroups.size(); ++i)
     {
         QTimer* t = new QTimer(this);
         m_coverAnimTimers.push_back(t);
     }
-    //revealAndCoverBoxesAnimation(m_boxGroups[0], 0);
 
     QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem();
     textItem->setFont(QFont(m_familyName, 30, 50));
     textItem->setText("Memory this");
-    textItem->setPos(0.35f*Game::RESOLUTION.width(), 0);
+    textItem->setPos(0.3f*Game::RESOLUTION.width(), 0);
     textItem->setBrush(QBrush(Game::WHITE_COLOR));
     addItem(textItem);
 
@@ -330,8 +319,6 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
 
 void GameScene::drawHighlightBox(float x, float y)
 {
-    //left, top = leftTopCoordsOfBox(boxx, boxy)
-    //    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, (left - 5, top - 5, BOXSIZE + 10, BOXSIZE + 10), 4)
     QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
     addRect(leftTopPoint.x() - 5, leftTopPoint.y() - 5, Game::BOX_SIZE+10, Game::BOX_SIZE + 10, QPen(QBrush(Game::HIGHLIGHT_COLOR), 6), QBrush(Qt::transparent));
 }
