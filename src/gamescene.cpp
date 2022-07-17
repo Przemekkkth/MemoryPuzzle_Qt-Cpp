@@ -13,7 +13,8 @@
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent), m_mouseClicked(false), m_firstSelection(QPointF(-1, -1)), m_boxX(0), m_boxY(0)
-    , m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_isStartAnimRunnning(false)
+    , m_countOfMove(0), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE),
+      m_isStartAnimRunnning(false)
 {
     loadPixmap();
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
@@ -56,6 +57,7 @@ void GameScene::loop()
 
         drawBoard();
         drawText();
+        drawMoveText();
         QPointF boardPoint =  getBoxAtPixel(m_clickedPos.x(), m_clickedPos.y());
         if(boardPoint != QPointF(-1,-1))
         {
@@ -81,11 +83,13 @@ void GameScene::loop()
                         m_hide = true;
                     }
                     m_firstSelection = QPointF(-1, -1);
+                    ++m_countOfMove;
                 }
 
             }
 
         }
+
     }
 }
 
@@ -296,7 +300,7 @@ void GameScene::drawText()
     QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem();
     textItem->setFont(QFont(m_familyName, 30, 80));
     textItem->setText("Memory Puzzle");
-    textItem->setPos(0.35f*Game::RESOLUTION.width(), 0);
+    textItem->setPos(0.3f*Game::RESOLUTION.width(), 0);
     textItem->setBrush(QBrush(Game::WHITE_COLOR));
     textItem->setPen(QPen(Game::CYAN_COLOR));
     addItem(textItem);
@@ -321,6 +325,16 @@ void GameScene::drawHighlightBox(float x, float y)
 {
     QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
     addRect(leftTopPoint.x() - 5, leftTopPoint.y() - 5, Game::BOX_SIZE+10, Game::BOX_SIZE + 10, QPen(QBrush(Game::HIGHLIGHT_COLOR), 6), QBrush(Qt::transparent));
+}
+
+void GameScene::drawMoveText()
+{
+    QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem();
+    textItem->setFont(QFont(m_familyName, 30, 50));
+    textItem->setText("Movements: " + QString::number(m_countOfMove));
+    textItem->setPos(0.3f*Game::RESOLUTION.width(), 0.65f * Game::RESOLUTION.width());
+    textItem->setBrush(QBrush(Game::WHITE_COLOR));
+    addItem(textItem);
 }
 
 void GameScene::revealAndCoverBoxesAnimation(QVector<QPoint> boxGroup, int index)

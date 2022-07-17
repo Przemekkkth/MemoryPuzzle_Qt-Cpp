@@ -33,6 +33,7 @@ private:
     void drawText();
     void drawIcon(QString shape, QColor color, int x, int y);
     void drawHighlightBox(float x, float y);
+    void drawMoveText();
     QPair<QString, QColor> getShapeAndColor(int x, int y);
 
 
@@ -49,6 +50,7 @@ private:
     void hideBox(int x1, int y1, int x2, int y2);
     int m_hx1, m_hx2, m_hy1, m_hy2;
     bool m_hide = false;
+    int m_countOfMove;
     //frame rate
     float m_deltaTime, m_loopTime;
     const float m_loopSpeed;
