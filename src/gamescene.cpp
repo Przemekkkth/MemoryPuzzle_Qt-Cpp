@@ -22,6 +22,7 @@ GameScene::GameScene(QObject *parent)
     int id = QFontDatabase::addApplicationFont(":/res/college.ttf");
     m_familyName = QFontDatabase::applicationFontFamilies(id).at(0);
 
+
     generateRevealedBoxesData(m_revealedBoxes, false);
     m_mainBoard = getRandomizedBoard();
 
@@ -30,6 +31,8 @@ GameScene::GameScene(QObject *parent)
     connect(&m_timer, &QTimer::timeout, this, &GameScene::loop);
     m_timer.start(Game::ITERATION_VALUE);
     m_elapsedTimer.start();
+
+
 }
 
 void GameScene::loop()
@@ -51,7 +54,15 @@ void GameScene::loop()
             if(!m_revealedBoxes[int(boardPoint.x())][int(boardPoint.y())])
             {
                 drawHighlightBox(boardPoint.x(), boardPoint.y());
+                QThread::currentThread()->msleep(200);
             }
+            if(!m_revealedBoxes[int(boardPoint.x())][int(boardPoint.y())] && m_mouseClicked)
+            {
+                //revealBox(int(boardPoint.x()), int(boardPoint.y()));
+                //QThread::currentThread()->msleep(1000);
+                m_revealedBoxes[int(boardPoint.x())][int(boardPoint.y())] = true;
+            }
+
         }
     }
 }
@@ -355,7 +366,7 @@ void GameScene::drawHighlightBox(float x, float y)
     //left, top = leftTopCoordsOfBox(boxx, boxy)
     //    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, (left - 5, top - 5, BOXSIZE + 10, BOXSIZE + 10), 4)
     QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
-    addRect(leftTopPoint.x() - 5, leftTopPoint.y() - 5, Game::BOX_SIZE+10, Game::BOX_SIZE + 10, QPen(QBrush(Game::HIGHLIGHT_COLOR), 4), QBrush(Qt::transparent));
+    addRect(leftTopPoint.x() - 5, leftTopPoint.y() - 5, Game::BOX_SIZE+10, Game::BOX_SIZE + 10, QPen(QBrush(Game::HIGHLIGHT_COLOR), 6), QBrush(Qt::transparent));
 }
 
 void GameScene::revealAndCoverBoxesAnimation(QVector<QPoint> boxGroup, int index)

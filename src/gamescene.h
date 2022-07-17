@@ -14,6 +14,8 @@ class GameScene : public QGraphicsScene
 public:
     explicit GameScene(QObject *parent = nullptr);
     void startGameAnimation();
+    void setRevealRectItem(QGraphicsRectItem *newRevealRectItem);
+
 signals:
 private slots:
     void loop();
@@ -30,6 +32,7 @@ private:
     void drawIcon(QString shape, QColor color, int x, int y);
     void drawHighlightBox(float x, float y);
     QPair<QString, QColor> getShapeAndColor(int x, int y);
+
 
     QTimer m_revealTimer;
     void coverBoxesAnimation(QVector<QPoint> boxGroup);
