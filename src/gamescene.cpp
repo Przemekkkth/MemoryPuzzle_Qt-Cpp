@@ -12,8 +12,8 @@
 #include <QFontDatabase>
 
 GameScene::GameScene(QObject *parent)
-    : QGraphicsScene(parent), m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_mouseClicked(false)
-    , m_boxX(0), m_boxY(0), m_isStartAnimRunnning(false)
+    : QGraphicsScene(parent), m_mouseClicked(false), m_firstSelection(QPointF(-1, -1)), m_boxX(0), m_boxY(0)
+    , m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_isStartAnimRunnning(false)
 {
 
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
@@ -45,7 +45,15 @@ void GameScene::loop()
     {
         m_loopTime -= m_loopSpeed;
         setBackgroundBrush(QBrush(Game::BG_COLOR));
+        if(m_hide)
+        {
+            QThread::currentThread()->msleep(1000);
+            m_revealedBoxes[m_hx1][m_hy1] = false;
+            m_revealedBoxes[m_hx2][m_hy2] = false;
+            m_hide = false;
+        }
         clear();
+
         drawBoard();
         drawText();
         QPointF boardPoint =  getBoxAtPixel(m_clickedPos.x(), m_clickedPos.y());
@@ -58,9 +66,24 @@ void GameScene::loop()
             }
             if(!m_revealedBoxes[int(boardPoint.x())][int(boardPoint.y())] && m_mouseClicked)
             {
-                //revealBox(int(boardPoint.x()), int(boardPoint.y()));
-                //QThread::currentThread()->msleep(1000);
                 m_revealedBoxes[int(boardPoint.x())][int(boardPoint.y())] = true;
+                if(m_firstSelection == QPointF(-1,-1) )
+                {
+                    m_firstSelection = QPointF(boardPoint);
+                }
+                else
+                {
+                    QPair<QString, QColor> field1 = getShapeAndColor(int(m_firstSelection.x()), int(m_firstSelection.y()));
+                    QPair<QString, QColor> field2 = getShapeAndColor(int(boardPoint.x()), int(boardPoint.y()));
+                    if(field1.first != field2.first || field1.second != field2.second)
+                    {
+                        //QThread::currentThread()->msleep(1000);
+                        hideBox(int(m_firstSelection.x()), int(m_firstSelection.y()), int(boardPoint.x()), int(boardPoint.y()) );
+                        m_hide = true;
+                    }
+                    m_firstSelection = QPointF(-1, -1);
+                }
+
             }
 
         }
@@ -140,13 +163,13 @@ QPointF GameScene::getBoxAtPixel(float x, float y)
     {
         return QPointF(-1, -1);
     }
-//    for boxx in range(BOARDWIDTH):
-//        for boxy in range(BOARDHEIGHT):
-//            left, top = leftTopCoordsOfBox(boxx, boxy)
-//            boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)
-//            if boxRect.collidepoint(x, y):
-//                return (boxx, boxy)
-//    return (None, None)
+    //    for boxx in range(BOARDWIDTH):
+    //        for boxy in range(BOARDHEIGHT):
+    //            left, top = leftTopCoordsOfBox(boxx, boxy)
+    //            boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)
+    //            if boxRect.collidepoint(x, y):
+    //                return (boxx, boxy)
+    //    return (None, None)
     for(unsigned int boxx = 0; boxx < Game::BOARD_WIDTH; ++boxx)
     {
         for(unsigned int boxy = 0; boxy < Game::BOARD_HEIGHT; ++boxy)
@@ -467,6 +490,14 @@ void GameScene::drawBoxCovers(QVector<QPoint> boxGroup, int coverage)
         }
     }
 
+}
+
+void GameScene::hideBox(int x1, int y1, int x2, int y2)
+{
+     m_hx1 = x1;
+     m_hx2 = x2;
+     m_hy1 = y1;
+     m_hy2 = y2;
 }
 
 void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

@@ -41,10 +41,12 @@ private:
     QVector<QVector<QPair<QString, QColor> > > m_mainBoard;
     bool m_mouseClicked;
     QPointF m_clickedPos;
+    QPointF m_firstSelection;
     int m_boxX, m_boxY;
     QString m_familyName;
-
-
+    void hideBox(int x1, int y1, int x2, int y2);
+    int m_hx1, m_hx2, m_hy1, m_hy2;
+    bool m_hide = false;
     //frame rate
     float m_deltaTime, m_loopTime;
     const float m_loopSpeed;
