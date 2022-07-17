@@ -67,9 +67,10 @@ private:
     QVector<QTimer*> m_coverAnimTimers;
     bool m_isStartAnimRunnning;
 
-
+    void renderScene();
 protected:
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 };
 
 #endif // GAMESCENE_H

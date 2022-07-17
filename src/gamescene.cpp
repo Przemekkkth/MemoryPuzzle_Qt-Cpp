@@ -2,13 +2,13 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsRectItem>
-#include <QGraphicsEllipseItem>
-#include <QGraphicsPolygonItem>
-#include <QGraphicsLineItem>
+#include <QPainter>
+#include <QDir>
 #include <algorithm>
 #include <vector>
 #include <utility>
 #include <QThread>
+#include <QKeyEvent>
 #include <QFontDatabase>
 
 GameScene::GameScene(QObject *parent)
@@ -315,8 +315,8 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
 {
     QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
     QGraphicsPixmapItem* iconItem = new QGraphicsPixmapItem(m_itemsPixmap.copy(Game::ALL_SHAPES.indexOf(shape)*Game::BOX_SIZE,
-                                                                                Game::ALL_COLORS.indexOf(color)*Game::BOX_SIZE,
-                                                                                Game::BOX_SIZE, Game::BOX_SIZE));
+                                                                               Game::ALL_COLORS.indexOf(color)*Game::BOX_SIZE,
+                                                                               Game::BOX_SIZE, Game::BOX_SIZE));
     iconItem->setPos(leftTopPoint.x(), leftTopPoint.y());
     addItem(iconItem);
 }
@@ -408,6 +408,19 @@ void GameScene::revealAndCoverBoxesAnimation(QVector<QPoint> boxGroup, int index
     m_revealAnimTimers[index]->start(Game::RENEVAL_ANIM_SPEED);
 }
 
+void GameScene::renderScene()
+{
+    static int index = 0;
+    QString fileName = QDir::currentPath() + QDir::separator() + "screen" + QString::number(index++) + ".png";
+    QRect rect = sceneRect().toAlignedRect();
+    QImage image(rect.size(), QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    render(&painter);
+    image.save(fileName);
+    qDebug() << "saved " << fileName;
+}
+
 void GameScene::coverBoxesAnimation(QVector<QPoint> boxGroup)
 {
     for(int coverage = 0; coverage < int(Game::BOX_SIZE)+int(Game::REVEAL_SPEED); coverage += int(Game::REVEAL_SPEED))
@@ -439,10 +452,10 @@ void GameScene::drawBoxCovers(QVector<QPoint> boxGroup, int coverage)
 
 void GameScene::hideBox(int x1, int y1, int x2, int y2)
 {
-     m_hx1 = x1;
-     m_hx2 = x2;
-     m_hy1 = y1;
-     m_hy2 = y2;
+    m_hx1 = x1;
+    m_hx2 = x2;
+    m_hy1 = y1;
+    m_hy2 = y2;
 }
 
 void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -454,4 +467,13 @@ void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     m_mouseClicked = true;
     m_clickedPos = event->scenePos();
     QGraphicsScene::mouseReleaseEvent(event);
+}
+
+void GameScene::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Z)
+    {
+        //renderScene();
+    }
+    QGraphicsScene::keyPressEvent(event);
 }
