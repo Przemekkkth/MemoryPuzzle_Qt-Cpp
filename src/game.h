@@ -29,16 +29,18 @@ public:
     static const QColor ORANGE_COLOR;
     static const QColor PURPLE_COLOR;
     static const QColor CYAN_COLOR;
+    static const QColor PINK_COLOR;
+    static const QColor BLACK_COLOR;
 
     static const QColor BG_COLOR;
     static const QColor LIGHTBG_COLOR;
     static const QColor BOX_COLOR;
     static const QColor HIGHLIGHT_COLOR;
 
-    static const QString DONUT;
+    static const QString HEART;
     static const QString SQUARE;
     static const QString DIAMOND;
-    static const QString LINES;
+    static const QString TRIANGLE;
     static const QString OVAL;
 
     static const float ITERATION_VALUE;

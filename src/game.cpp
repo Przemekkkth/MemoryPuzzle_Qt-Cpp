@@ -20,25 +20,27 @@ const QColor Game::YELLOW_COLOR    = QColor(255, 255,   0);
 const QColor Game::ORANGE_COLOR    = QColor(255, 128,   0);
 const QColor Game::PURPLE_COLOR    = QColor(255,   0, 255);
 const QColor Game::CYAN_COLOR      = QColor(  0, 255, 255);
+const QColor Game::PINK_COLOR      = QColor(255, 192,  203);
+const QColor Game::BLACK_COLOR     = QColor(  0,   0,    0);
 
 const QColor Game::BG_COLOR = NAVYBLUE_COLOR;
 const QColor Game::LIGHTBG_COLOR = GRAY_COLOR;
 const QColor Game::BOX_COLOR = WHITE_COLOR;
 const QColor Game::HIGHLIGHT_COLOR = BLUE_COLOR;
 
-const QString Game::DONUT = "donut";
+const QString Game::HEART = "heart";
 const QString Game::SQUARE = "square";
 const QString Game::DIAMOND = "diamond";
-const QString Game::LINES = "lines";
+const QString Game::TRIANGLE = "triangle";
 const QString Game::OVAL = "oval";
 
 QList<QColor> Game::ALL_COLORS = {
-    GRAY_COLOR, NAVYBLUE_COLOR,
-    GREEN_COLOR, YELLOW_COLOR, ORANGE_COLOR,
-    PURPLE_COLOR, CYAN_COLOR
+    YELLOW_COLOR, RED_COLOR,
+    PINK_COLOR, ORANGE_COLOR, GREEN_COLOR,
+    BLUE_COLOR, BLACK_COLOR
 };
 QStringList   Game::ALL_SHAPES = {
-    DONUT, SQUARE, DIAMOND, LINES, OVAL
+    HEART, SQUARE, DIAMOND, TRIANGLE, OVAL
 };
 
 const float Game::ITERATION_VALUE = 1000.0f/(float)FPS;

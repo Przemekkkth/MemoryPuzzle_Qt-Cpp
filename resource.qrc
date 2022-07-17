@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>res/cursor.png</file>
         <file>res/college.ttf</file>
+        <file>res/items.png</file>
     </qresource>
 </RCC>

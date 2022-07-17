@@ -323,7 +323,7 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
     //addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Qt::black), QBrush(Qt::black));
 
 
-    if(shape == Game::DONUT)
+    if(shape == Game::HEART)
     {
         QGraphicsEllipseItem* circle1 = new QGraphicsEllipseItem(0,0, half-5, half -5);
         circle1->setBrush(QBrush(color));
@@ -357,7 +357,7 @@ void GameScene::drawIcon(QString shape, QColor color, int x, int y)
         //polyItem->setPos(leftTopPoint.x(), leftTopPoint.y());
         addItem(polyItem);
     }
-    else if(shape == Game::LINES)
+    else if(shape == Game::TRIANGLE)
     {
         for(unsigned int i = 0; i < Game::BOX_SIZE; ++i)
         {
