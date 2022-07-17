@@ -53,6 +53,7 @@ public:
 
     static const QString PATH_TO_FONT;
     static const QString PATH_TO_CURSOR_PIXMAP;
+    static const QString PATH_TO_ITEMS_PIXMAP;
 };
 
 #endif // GAME_H

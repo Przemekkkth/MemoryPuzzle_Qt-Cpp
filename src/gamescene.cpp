@@ -15,7 +15,7 @@ GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent), m_mouseClicked(false), m_firstSelection(QPointF(-1, -1)), m_boxX(0), m_boxY(0)
     , m_deltaTime(0.0f), m_loopTime(0.0f), m_loopSpeed(Game::ITERATION_VALUE), m_isStartAnimRunnning(false)
 {
-
+    loadPixmap();
     setSceneRect(0, 0, Game::RESOLUTION.width(), Game::RESOLUTION.height());
     setBackgroundBrush(QBrush(Game::BG_COLOR));
 
@@ -88,6 +88,11 @@ void GameScene::loop()
 
         }
     }
+}
+
+void GameScene::loadPixmap()
+{
+    m_itemsPixmap.load(Game::PATH_TO_ITEMS_PIXMAP);
 }
 
 void GameScene::generateRevealedBoxesData(bool tab[Game::BOARD_WIDTH][Game::BOARD_HEIGHT], bool value)
@@ -315,73 +320,12 @@ QPair<QString, QColor> GameScene::getShapeAndColor(int x, int y)
 
 void GameScene::drawIcon(QString shape, QColor color, int x, int y)
 {
-    int quarter = int(Game::BOX_SIZE * 0.25f);
-    int half =    int(Game::BOX_SIZE * 0.5f);
-
     QPointF leftTopPoint = leftTopCoordsOfBox(QPointF(x, y));
-
-    //addRect(leftTopPoint.x(), leftTopPoint.y(), Game::BOX_SIZE, Game::BOX_SIZE, QPen(Qt::black), QBrush(Qt::black));
-
-
-    if(shape == Game::HEART)
-    {
-        QGraphicsEllipseItem* circle1 = new QGraphicsEllipseItem(0,0, half-5, half -5);
-        circle1->setBrush(QBrush(color));
-        circle1->setPen(QPen(color));
-        circle1->setPos(leftTopPoint.x() + half, leftTopPoint.y() + half);
-        addItem(circle1);
-
-        QGraphicsEllipseItem* circle2 = new QGraphicsEllipseItem(0,0, quarter - 5, quarter - 5);
-        circle2->setBrush(QBrush(Game::BG_COLOR));
-        circle2->setPen(QPen(Game::BG_COLOR));
-        circle2->setPos(leftTopPoint.x() + half, leftTopPoint.y() + half);
-        addItem(circle2);
-
-    }
-    else if(shape == Game::SQUARE)
-    {
-        QGraphicsRectItem* rectItem = new QGraphicsRectItem(0,0, Game::BOX_SIZE - half, Game::BOX_SIZE - half);
-        rectItem->setBrush(QBrush(color));
-        rectItem->setPen(QPen(color));
-        rectItem->setPos(leftTopPoint.x() + quarter, leftTopPoint.y()+quarter);
-        addItem(rectItem);
-    }
-    else if(shape == Game::DIAMOND)
-    {
-        QGraphicsPolygonItem* polyItem = new QGraphicsPolygonItem();
-        QList<QPoint> points = {QPoint(leftTopPoint.x() + half, leftTopPoint.y()), QPoint(leftTopPoint.x() + Game::BOX_SIZE - 1, leftTopPoint.y() + half), QPoint(leftTopPoint.x() + half, leftTopPoint.y() + Game::BOX_SIZE - 1), QPoint(leftTopPoint.x(), leftTopPoint.y() + half)};
-        QPolygonF poly = QPolygonF(points);
-        polyItem->setPolygon(poly);
-        polyItem->setBrush(QBrush(color));
-        polyItem->setPen(QPen(color));
-        //polyItem->setPos(leftTopPoint.x(), leftTopPoint.y());
-        addItem(polyItem);
-    }
-    else if(shape == Game::TRIANGLE)
-    {
-        for(unsigned int i = 0; i < Game::BOX_SIZE; ++i)
-        {
-            QGraphicsLineItem *lineItem1 = new QGraphicsLineItem();
-            lineItem1->setLine(QLine(QPoint(leftTopPoint.x(), leftTopPoint.y() + i), QPoint(leftTopPoint.x()+i, leftTopPoint.y())));
-            lineItem1->setPen(QPen(color, 2));
-            //lineItem1->setPos(leftTopPoint);
-            addItem(lineItem1);
-
-            QGraphicsLineItem *lineItem2 = new QGraphicsLineItem();
-            lineItem2->setLine(QLine(QPoint(leftTopPoint.x() + i, leftTopPoint.y() + Game::BOX_SIZE - 1), QPoint(leftTopPoint.x()+ Game::BOX_SIZE - 1, leftTopPoint.y() + 1)));
-            lineItem2->setPen(QPen(color));
-            //lineItem2->setPos(leftTopPoint);
-            addItem(lineItem2);
-        }
-    }
-    else if(shape == Game::OVAL)
-    {
-        QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem(0, 0, Game::BOX_SIZE, half);
-        ellipseItem->setBrush(QBrush(color));
-        ellipseItem->setPen(QPen(color));
-        ellipseItem->setPos(leftTopPoint.x(), leftTopPoint.y()+quarter);
-        addItem(ellipseItem);
-    }
+    QGraphicsPixmapItem* iconItem = new QGraphicsPixmapItem(m_itemsPixmap.copy(Game::ALL_SHAPES.indexOf(shape)*Game::BOX_SIZE,
+                                                                                Game::ALL_COLORS.indexOf(color)*Game::BOX_SIZE,
+                                                                                Game::BOX_SIZE, Game::BOX_SIZE));
+    iconItem->setPos(leftTopPoint.x(), leftTopPoint.y());
+    addItem(iconItem);
 }
 
 void GameScene::drawHighlightBox(float x, float y)

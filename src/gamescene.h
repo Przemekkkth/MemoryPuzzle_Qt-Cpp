@@ -20,6 +20,8 @@ signals:
 private slots:
     void loop();
 private:
+    void loadPixmap();
+    QPixmap m_itemsPixmap;
     void generateRevealedBoxesData(bool a[Game::BOARD_WIDTH][Game::BOARD_HEIGHT], bool value);
     QVector<QVector<QPair<QString, QColor> > > getRandomizedBoard();
     bool m_revealedBoxes[Game::BOARD_WIDTH][Game::BOARD_HEIGHT];

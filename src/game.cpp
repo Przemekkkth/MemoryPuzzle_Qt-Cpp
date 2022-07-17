@@ -47,6 +47,7 @@ const float Game::ITERATION_VALUE = 1000.0f/(float)FPS;
 
 const QString Game::PATH_TO_FONT = ":/res/college.ttf";
 const QString Game::PATH_TO_CURSOR_PIXMAP = ":/res/cursor.png";
+const QString Game::PATH_TO_ITEMS_PIXMAP = ":/res/items.png";
 
 Game::Game()
 {
