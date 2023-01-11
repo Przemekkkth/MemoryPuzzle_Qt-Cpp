@@ -1,4 +1,4 @@
-# MemoryPuzzle Qt/C++
+# Memory Puzzle Qt/C++
 Simple memory game.
 ## Screenshots
 ![Image](https://user-images.githubusercontent.com/28188300/179404478-51209555-f0b4-431b-a28e-7c0cc4a56466.png)
