@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 #include <utility>
+#include <random>
 #include <QThread>
 #include <QKeyEvent>
 #include <QFontDatabase>
@@ -123,8 +124,10 @@ QVector< QVector< QPair<QString, QColor> > > GameScene::getRandomizedBoard()
         }
     }
 
-    std::random_shuffle(tmpIcons.begin(), tmpIcons.end());
+    std::random_device rd;
+    std::mt19937 g(rd());
 
+    std::shuffle(tmpIcons.begin(), tmpIcons.end(), g);
     foreach(QString shape, Game::ALL_SHAPES)
     {
         foreach(QColor color, Game::ALL_COLORS)
@@ -133,7 +136,10 @@ QVector< QVector< QPair<QString, QColor> > > GameScene::getRandomizedBoard()
         }
     }
 
-    std::random_shuffle(tmpIcons.begin(), tmpIcons.end());
+    std::random_device rd1;
+    std::mt19937 g1(rd1());
+
+    std::shuffle(tmpIcons.begin(), tmpIcons.end(), g1);
 
     for(const std::pair<QString, QColor> &element : tmpIcons)
     {
@@ -202,7 +208,11 @@ void GameScene::startGameAnimation()
         }
     }
 
-    std::random_shuffle(tmpBoxes.begin(), tmpBoxes.end());
+    std::random_device rd1;
+    std::mt19937 g1(rd1());
+
+    std::shuffle(tmpBoxes.begin(), tmpBoxes.end(), g1);
+
     QVector<QPoint> boxes;
     for(QPoint point : tmpBoxes)
     {
